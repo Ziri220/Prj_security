@@ -1,4 +1,4 @@
 <?php
-header('Location: Prj_security-master/login.php');
+header('Location: login.php');
 exit();
 ?>
