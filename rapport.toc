@@ -1,0 +1,45 @@
+\babel@toc {french}{}\relax 
+\contentsline {chapter}{Introduction}{3}{chapter*.2}%
+\contentsline {chapter}{\numberline {1}Déploiement de l'application sur Railway}{4}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Présentation de la plateforme Railway}{4}{section.1.1}%
+\contentsline {section}{\numberline {1.2}Étapes de déploiement}{4}{section.1.2}%
+\contentsline {subsection}{\numberline {1.2.1}Connexion et autorisation GitHub}{4}{subsection.1.2.1}%
+\contentsline {subsection}{\numberline {1.2.2}Création d'un nouveau projet}{5}{subsection.1.2.2}%
+\contentsline {subsection}{\numberline {1.2.3}Configuration de l'accès au dépôt}{6}{subsection.1.2.3}%
+\contentsline {subsection}{\numberline {1.2.4}Installation de Railway App et sélection du dépôt}{6}{subsection.1.2.4}%
+\contentsline {subsection}{\numberline {1.2.5}Tableau de bord et déploiement}{7}{subsection.1.2.5}%
+\contentsline {subsection}{\numberline {1.2.6}Application déployée et en ligne}{8}{subsection.1.2.6}%
+\contentsline {subsection}{\numberline {1.2.7}Configuration réseau et certificat TLS}{8}{subsection.1.2.7}%
+\contentsline {section}{\numberline {1.3}Récapitulatif du déploiement}{9}{section.1.3}%
+\contentsline {chapter}{\numberline {2}Audit de Sécurité}{10}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Méthodologie d'audit}{10}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Scan automatisé avec OWASP ZAP}{10}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Résultats du second scan automatisé}{11}{section.2.3}%
+\contentsline {chapter}{\numberline {3}Détection et Exploitation des Vulnérabilités}{13}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Vue d'ensemble des vulnérabilités}{13}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Vuln. 1 --- SQL Injection (Login Bypass)}{13}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Description}{13}{subsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.2.2}Exploitation}{13}{subsection.3.2.2}%
+\contentsline {section}{\numberline {3.3}Vuln. 2 --- SQL Injection (Register)}{14}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}Description}{14}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}Exploitation}{15}{subsection.3.3.2}%
+\contentsline {section}{\numberline {3.4}Vuln. 3 \& 4 --- Stored XSS}{15}{section.3.4}%
+\contentsline {subsection}{\numberline {3.4.1}Description}{15}{subsection.3.4.1}%
+\contentsline {subsection}{\numberline {3.4.2}Exploitation}{16}{subsection.3.4.2}%
+\contentsline {section}{\numberline {3.5}Vuln. 5 --- Sensitive Data Exposure}{17}{section.3.5}%
+\contentsline {subsection}{\numberline {3.5.1}Description}{17}{subsection.3.5.1}%
+\contentsline {subsection}{\numberline {3.5.2}Exploitation}{17}{subsection.3.5.2}%
+\contentsline {section}{\numberline {3.6}Vuln. 6 --- Broken Access Control}{18}{section.3.6}%
+\contentsline {subsection}{\numberline {3.6.1}Description}{18}{subsection.3.6.1}%
+\contentsline {subsection}{\numberline {3.6.2}Exploitation}{18}{subsection.3.6.2}%
+\contentsline {section}{\numberline {3.7}Vuln. 7 --- No Password Hashing}{19}{section.3.7}%
+\contentsline {subsection}{\numberline {3.7.1}Description}{19}{subsection.3.7.1}%
+\contentsline {chapter}{\numberline {4}Remédiation des Vulnérabilités}{21}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Vue d'ensemble des corrections}{21}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Fix 1 --- SQL Injection \& Password Hashing (login.php)}{21}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Fix 2 --- SQL Injection \& Password Hashing (register.php)}{22}{section.4.3}%
+\contentsline {section}{\numberline {4.4}Fix 3 --- Stored XSS (reserver.php \& mes\_reservations.php)}{22}{section.4.4}%
+\contentsline {section}{\numberline {4.5}Fix 4 --- Broken Access Control (annuler.php)}{23}{section.4.5}%
+\contentsline {section}{\numberline {4.6}Fix 5 --- Sensitive Data Exposure (admin/users.php)}{23}{section.4.6}%
+\contentsline {section}{\numberline {4.7}Fix 6 --- Mise à jour de la base de données}{24}{section.4.7}%
+\contentsline {chapter}{Conclusion}{25}{chapter*.3}%

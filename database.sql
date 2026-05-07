@@ -1,4 +1,4 @@
--- =============================================
+﻿-- =============================================
 -- Base de données : Gestion des Salles - Faculté
 -- =============================================
 
@@ -49,12 +49,14 @@ CREATE TABLE reservations (
 );
 
 -- ---------------------------------------------
--- Données initiales
+-- Données initiales (mots de passe hashés avec bcrypt)
+-- admin123 => $2y$10$roas4xJObcamZx9TEQODuOUsTkMpAqYJM1taVUoeq5WjgoQieakBy
+-- prof123  => $2y$10$VQde.r18wmpMU4yJ.hHXKOq63IE.HskBDBUrwY1BZ3JbfVpxw9qAu
 -- ---------------------------------------------
 INSERT INTO users (nom, prenom, email, password, role) VALUES
-('Admin', 'Système', 'admin@faculte.ma', 'admin123', 'admin'),
-('Alaoui', 'Mohammed', 'alaoui@faculte.ma', 'prof123', 'enseignant'),
-('Benali', 'Fatima', 'benali@faculte.ma', 'prof123', 'enseignant');
+('Admin', 'Système', 'admin@faculte.ma', '$2y$10$roas4xJObcamZx9TEQODuOUsTkMpAqYJM1taVUoeq5WjgoQieakBy', 'admin'),
+('Alaoui', 'Mohammed', 'alaoui@faculte.ma', '$2y$10$VQde.r18wmpMU4yJ.hHXKOq63IE.HskBDBUrwY1BZ3JbfVpxw9qAu', 'enseignant'),
+('Benali', 'Fatima', 'benali@faculte.ma', '$2y$10$VQde.r18wmpMU4yJ.hHXKOq63IE.HskBDBUrwY1BZ3JbfVpxw9qAu', 'enseignant');
 
 INSERT INTO salles (nom, capacite, type, equipements) VALUES
 ('Salle A1', 30, 'TD', 'Tableau blanc, Projecteur'),

@@ -1,18 +1,20 @@
-<?php
+﻿<?php
 require_once '../includes/db.php';
 require_once '../includes/auth.php';
 requireAdmin();
 
 $success = '';
 
-// Supprimer
 if (isset($_GET['delete'])) {
     $id = (int)$_GET['delete'];
-    $conn->query("DELETE FROM users WHERE id=$id AND role='enseignant'");
+    $stmt = $conn->prepare("DELETE FROM users WHERE id = ? AND role = 'enseignant'");
+    $stmt->bind_param("i", $id);
+    $stmt->execute();
+    $stmt->close();
     $success = "Enseignant supprimé.";
 }
 
-$users = $conn->query("SELECT * FROM users WHERE role='enseignant' ORDER BY nom");
+$users = $conn->query("SELECT id, nom, prenom, email, created_at FROM users WHERE role='enseignant' ORDER BY nom");
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -34,7 +36,7 @@ $users = $conn->query("SELECT * FROM users WHERE role='enseignant' ORDER BY nom"
         <div class="page-content">
 
             <?php if ($success): ?>
-                <div class="alert alert-success"><?= $success ?></div>
+                <div class="alert alert-success"><?= htmlspecialchars($success) ?></div>
             <?php endif; ?>
 
             <div class="card">
@@ -44,7 +46,6 @@ $users = $conn->query("SELECT * FROM users WHERE role='enseignant' ORDER BY nom"
                             <th>#</th>
                             <th>Nom complet</th>
                             <th>Email</th>
-                            <th>Mot de passe</th>
                             <th>Inscrit le</th>
                             <th>Actions</th>
                         </tr>
@@ -52,14 +53,12 @@ $users = $conn->query("SELECT * FROM users WHERE role='enseignant' ORDER BY nom"
                     <tbody>
                     <?php while ($u = $users->fetch_assoc()): ?>
                         <tr>
-                            <td><?= $u['id'] ?></td>
+                            <td><?= (int)$u['id'] ?></td>
                             <td><?= htmlspecialchars($u['prenom'] . ' ' . $u['nom']) ?></td>
                             <td><?= htmlspecialchars($u['email']) ?></td>
-                            <!-- ⚠️ VULNÉRABILITÉ : Affichage mot de passe en clair ! -->
-                            <td><code style="background:#fde8e8;padding:2px 6px;border-radius:4px;"><?= $u['password'] ?></code></td>
                             <td><?= date('d/m/Y', strtotime($u['created_at'])) ?></td>
                             <td>
-                                <a href="?delete=<?= $u['id'] ?>" class="btn btn-danger btn-sm"
+                                <a href="?delete=<?= (int)$u['id'] ?>" class="btn btn-danger btn-sm"
                                    data-confirm="Supprimer cet enseignant ?">🗑️ Supprimer</a>
                             </td>
                         </tr>

@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once '../includes/db.php';
 require_once '../includes/auth.php';
 requireLogin();
@@ -7,40 +7,41 @@ $error = '';
 $success = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $salle_id = (int)$_POST['salle_id'];
-    $date = $_POST['date_reservation'];
+    $salle_id    = (int)$_POST['salle_id'];
+    $date        = $_POST['date_reservation'];
     $heure_debut = $_POST['heure_debut'];
-    $heure_fin = $_POST['heure_fin'];
-    $motif = $_POST['motif'];
-    $user_id = $_SESSION['user_id'];
+    $heure_fin   = $_POST['heure_fin'];
+    $motif       = htmlspecialchars(strip_tags(trim($_POST['motif'])));
+    $user_id     = $_SESSION['user_id'];
 
     if ($salle_id <= 0) {
         $error = "⚠️ Veuillez sélectionner une salle.";
     } elseif ($heure_fin <= $heure_debut) {
         $error = "⚠️ L'heure de fin doit être après l'heure de début.";
     } else {
-        // Vérifier le conflit de créneau
-        $check = $conn->query("
+        $check = $conn->prepare("
             SELECT id FROM reservations
-            WHERE salle_id = $salle_id
-            AND date_reservation = '$date'
-            AND statut = 'confirmée'
-            AND heure_debut < '$heure_fin'
-            AND heure_fin > '$heure_debut'
+            WHERE salle_id = ? AND date_reservation = ? AND statut = 'confirmée'
+            AND heure_debut < ? AND heure_fin > ?
         ");
+        $check->bind_param("isss", $salle_id, $date, $heure_fin, $heure_debut);
+        $check->execute();
+        $check->store_result();
 
-        if ($check && $check->num_rows > 0) {
+        if ($check->num_rows > 0) {
             $error = "⚠️ Cette salle est déjà réservée pour ce créneau. Choisissez un autre horaire ou une autre salle.";
         } else {
-            // ⚠️ VULNÉRABILITÉ XSS : motif non échappé lors de l'affichage (intentionnel)
-            $sql = "INSERT INTO reservations (user_id, salle_id, date_reservation, heure_debut, heure_fin, motif)
-                    VALUES ($user_id, $salle_id, '$date', '$heure_debut', '$heure_fin', '$motif')";
-            if ($conn->query($sql)) {
+            $stmt = $conn->prepare("INSERT INTO reservations (user_id, salle_id, date_reservation, heure_debut, heure_fin, motif)
+                    VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("iissss", $user_id, $salle_id, $date, $heure_debut, $heure_fin, $motif);
+            if ($stmt->execute()) {
                 $success = "✅ Réservation effectuée avec succès !";
             } else {
-                $error = "Erreur lors de la réservation : " . $conn->error;
+                $error = "Erreur lors de la réservation.";
             }
+            $stmt->close();
         }
+        $check->close();
     }
 }
 ?>
@@ -63,7 +64,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
         <div class="page-content">
 
-            <!-- Salles disponibles -->
             <div class="card" style="margin-bottom:24px;">
                 <div class="card-header"><h3>🏛️ Salles disponibles</h3></div>
                 <div class="card-body">
@@ -76,12 +76,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <div class="salle-card-header">
                                 <div>
                                     <div class="salle-name"><?= htmlspecialchars($s['nom']) ?></div>
-                                    <div class="salle-type"><?= $s['type'] ?></div>
+                                    <div class="salle-type"><?= htmlspecialchars($s['type']) ?></div>
                                 </div>
                                 <span class="badge badge-success">Libre</span>
                             </div>
                             <div class="salle-info">
-                                <span>👥 Capacité : <?= $s['capacite'] ?> personnes</span>
+                                <span>👥 Capacité : <?= (int)$s['capacite'] ?> personnes</span>
                                 <span>🔧 <?= htmlspecialchars($s['equipements']) ?></span>
                             </div>
                         </div>
@@ -90,15 +90,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             </div>
 
-            <!-- Formulaire de réservation -->
             <div class="form-card">
                 <h3 style="margin-bottom:20px;font-size:17px;">📝 Formulaire de réservation</h3>
 
                 <?php if ($error): ?>
-                    <div class="alert alert-danger"><?= $error ?></div>
+                    <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
                 <?php endif; ?>
                 <?php if ($success): ?>
-                    <div class="alert alert-success"><?= $success ?></div>
+                    <div class="alert alert-success"><?= htmlspecialchars($success) ?></div>
                 <?php endif; ?>
 
                 <form method="POST">
@@ -110,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             $salles2 = $conn->query("SELECT * FROM salles WHERE disponible=1 ORDER BY type, nom");
                             while ($s = $salles2->fetch_assoc()):
                             ?>
-                                <option value="<?= $s['id'] ?>"><?= htmlspecialchars($s['nom']) ?> (<?= $s['type'] ?>)</option>
+                                <option value="<?= (int)$s['id'] ?>"><?= htmlspecialchars($s['nom']) ?> (<?= htmlspecialchars($s['type']) ?>)</option>
                             <?php endwhile; ?>
                         </select>
                     </div>
@@ -130,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     <div class="form-group">
                         <label>Motif / Cours</label>
-                        <input type="text" name="motif" placeholder="ex: Cours de Mathématiques S3">
+                        <input type="text" name="motif" placeholder="ex: Cours de Mathématiques S3" maxlength="255">
                     </div>
                     <div class="form-actions">
                         <button type="submit" class="btn btn-primary">Confirmer la réservation</button>

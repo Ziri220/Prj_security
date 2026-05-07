@@ -1,0 +1,4 @@
+.git
+railway.toml
+docker-compose.yml
+.dockerignore

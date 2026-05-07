@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 require_once 'includes/db.php';
 require_once 'includes/auth.php';
 
@@ -11,24 +11,27 @@ $error = '';
 $success = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nom = $_POST['nom'];
-    $prenom = $_POST['prenom'];
-    $email = $_POST['email'];
+    $nom    = htmlspecialchars(strip_tags(trim($_POST['nom'])));
+    $prenom = htmlspecialchars(strip_tags(trim($_POST['prenom'])));
+    $email  = trim($_POST['email']);
     $password = $_POST['password'];
-    $confirm = $_POST['confirm_password'];
+    $confirm  = $_POST['confirm_password'];
 
     if ($password !== $confirm) {
         $error = "Les mots de passe ne correspondent pas.";
+    } elseif (strlen($password) < 6) {
+        $error = "Le mot de passe doit contenir au moins 6 caractères.";
     } else {
-        // ⚠️ VULNÉRABILITÉ : mot de passe stocké en clair (intentionnel)
-        $sql = "INSERT INTO users (nom, prenom, email, password, role)
-                VALUES ('$nom', '$prenom', '$email', '$password', 'enseignant')";
+        $hashed = password_hash($password, PASSWORD_DEFAULT);
+        $stmt = $conn->prepare("INSERT INTO users (nom, prenom, email, password, role) VALUES (?, ?, ?, ?, 'enseignant')");
+        $stmt->bind_param("ssss", $nom, $prenom, $email, $hashed);
 
-        if ($conn->query($sql)) {
+        if ($stmt->execute()) {
             $success = "Compte créé avec succès ! Vous pouvez vous connecter.";
         } else {
             $error = "Cet email est déjà utilisé.";
         }
+        $stmt->close();
     }
 }
 ?>
@@ -50,10 +53,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
         <?php if ($error): ?>
-            <div class="alert alert-danger"><?= $error ?></div>
+            <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
         <?php endif; ?>
         <?php if ($success): ?>
-            <div class="alert alert-success"><?= $success ?></div>
+            <div class="alert alert-success"><?= htmlspecialchars($success) ?></div>
         <?php endif; ?>
 
         <form method="POST">
@@ -69,11 +72,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <div class="form-group">
                 <label>Email</label>
-                <input type="text" name="email" placeholder="prof@faculte.ma" required>
+                <input type="email" name="email" placeholder="prof@faculte.ma" required>
             </div>
             <div class="form-group">
                 <label>Mot de passe</label>
-                <input type="password" name="password" placeholder="••••••••" required>
+                <input type="password" name="password" placeholder="••••••••" required minlength="6">
             </div>
             <div class="form-group">
                 <label>Confirmer le mot de passe</label>
